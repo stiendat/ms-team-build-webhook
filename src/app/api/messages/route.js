@@ -11,7 +11,6 @@ export async function GET() {
           m.sender, 
           m.timestamp, 
           m.content, 
-          c.command,
           c.status as command_status,
           c.start_time,
           c.end_time,

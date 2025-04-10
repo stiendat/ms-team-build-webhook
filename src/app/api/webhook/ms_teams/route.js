@@ -38,7 +38,7 @@ export async function POST(request) {
         const messageResult = await dbManager.saveTeamsMessage(senderName, timestamp, textContent);
         const messageId = messageResult.lastInsertRowid;
 
-        let commandExecutionResult = null;
+        let commandExecutionResult;
         // Execute a build command
         commandExecutionResult = await commandExecutor.executeCommand(
             messageId,
