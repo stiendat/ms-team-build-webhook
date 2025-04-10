@@ -10,10 +10,13 @@ export default function MessageHistory() {
     const [error, setError] = useState(null);
     const router = useRouter();
 
+    // Get the base path from environment or default to empty string
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const response = await fetch('/api/messages');
+                const response = await fetch(`${basePath}/api/messages`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch messages');
                 }
@@ -35,7 +38,7 @@ export default function MessageHistory() {
 
     const handleRowClick = (message) => {
         if (message.command_status) {
-            router.push(`/command/${message.id}`);
+            router.push(`${basePath}/command/${message.id}`);
         }
     };
 

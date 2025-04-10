@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    basePath: process.env.BASE_PATH || '',
+    assetPrefix: process.env.BASE_PATH || '/',
+    output: 'standalone',
+};
 
 export default nextConfig;
