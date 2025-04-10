@@ -2,11 +2,66 @@
 import { NextResponse } from 'next/server';
 import dbManager from '@/lib/db';
 import commandExecutor from "@/lib/commandExecutor";
+import {validateTeamsWebhook} from "@/lib/webhookValidator";
 
 export async function POST(request) {
+    let messageId;
+
     try {
+        // Get the raw request body for HMAC validation
+        const rawBody = await request.text();
+
+        // Get the Authorization header
+        const authHeader = request.headers.get('Authorization');
+
+        // Validate the webhook request
+        const validationResult = validateTeamsWebhook(
+            authHeader,
+            rawBody,
+            process.env.HMAC_SECRET
+        );
+
+        if (!validationResult.isValid) {
+            console.warn('Invalid webhook signature:', validationResult.errorMessage);
+
+            // Create an unauthorized adaptive card response
+            const unauthorizedCard = {
+                type: "AdaptiveCard",
+                version: "1.5",
+                body: [
+                    {
+                        type: "TextBlock",
+                        text: "Authentication Error",
+                        weight: "Bolder",
+                        size: "Medium",
+                        color: "Attention"
+                    },
+                    {
+                        type: "TextBlock",
+                        text: `Invalid webhook signature`,
+                        wrap: true
+                    }
+                ],
+                $schema: "http://adaptivecards.io/schemas/adaptive-card.json"
+            };
+
+            // Return adaptive card with 401 status
+            return NextResponse.json({
+                type: "message",
+                attachments: [
+                    {
+                        contentType: "application/vnd.microsoft.card.adaptive",
+                        content: unauthorizedCard
+                    }
+                ]
+            }, { status: 200 });
+        }
+
+        // Log the validation result
+        console.log('Webhook signature validated successfully.');
+
         // Parse the incoming webhook data
-        const payload = await request.json();
+        const payload = JSON.parse(rawBody);
 
         // Extract the required information
         const senderName = payload.from?.name || 'Unknown User';
@@ -128,7 +183,7 @@ export async function POST(request) {
                 }
             ]
         }, {
-            status: 500
+            status: 200
         });
     }
 }
