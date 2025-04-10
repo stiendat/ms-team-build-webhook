@@ -1,6 +1,7 @@
 // src/app/command/[id]/page.js
 import dbManager from '@/lib/db';
 import Link from 'next/link';
+import {formatDateUTC7} from "@/lib/dateUtils";
 
 export default async function CommandDetails({ params }) {
     let param = await params;
@@ -23,9 +24,9 @@ export default async function CommandDetails({ params }) {
     if (!command) {
         return (
             <main className="container mx-auto p-4">
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h1 className="text-2xl font-bold mb-4">Command not found</h1>
-                    <Link href="/" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+                <div className="bg-slate-100 p-6 rounded-lg shadow-md">
+                    <h1 className="text-2xl font-bold mb-4 text-purple-800">Command not found</h1>
+                    <Link href="/" className="text-purple-600 hover:text-purple-800 hover:underline">Back to Dashboard</Link>
                 </div>
             </main>
         );
@@ -33,50 +34,48 @@ export default async function CommandDetails({ params }) {
 
     return (
         <main className="container mx-auto p-4">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-                <h1 className="text-2xl font-bold mb-4">Command Execution Details</h1>
+            <div className="bg-slate-100 p-6 rounded-lg shadow-md">
+                <h1 className="text-2xl font-bold mb-4 text-purple-800">Command Execution Details</h1>
                 <div className="mb-4">
-                    <Link href="/" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+                    <Link href="/" className="text-purple-600 hover:text-purple-800 hover:underline">Back to Dashboard</Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="border p-4 rounded">
-                        <h2 className="font-bold mb-2">Command Information</h2>
-                        <p><span className="font-semibold">ID:</span> {command.id}</p>
-                        <p><span className="font-semibold">Command:</span> {command.command}</p>
-                        <p><span className="font-semibold">Status:</span>
+                    <div className="border border-slate-300 bg-white p-4 rounded">
+                        <h2 className="font-bold mb-2 text-purple-700">Command Information</h2>
+                        <p><span className="font-semibold text-slate-700">ID:</span> <span className="text-black">{command.id}</span></p>
+                        <p><span className="font-semibold text-slate-700">Status:</span>
                             <span className={
-                                command.status === 'SUCCESS' ? 'text-green-600' :
-                                    command.status === 'FAILED' ? 'text-red-600' :
-                                        'text-blue-600'
+                                command.status === 'SUCCESS' ? 'text-emerald-600 font-medium' :
+                                    command.status === 'FAILED' ? 'text-rose-600 font-medium' :
+                                        'text-amber-600 font-medium'
                             }>
-                {command.status}
-              </span>
+                                {command.status}
+                            </span>
                         </p>
-                        <p><span className="font-semibold">Start Time:</span> {new Date(command.start_time).toLocaleString()}</p>
-                        {command.end_time && <p><span className="font-semibold">End Time:</span> {new Date(command.end_time).toLocaleString()}</p>}
-                        {command.end_time && <p><span className="font-semibold">Duration:</span> {calculateDuration(command.start_time, command.end_time)}</p>}
+                        <p><span className="font-semibold text-slate-700">Start Time:</span> <span className="text-black">{formatDateUTC7(command.start_time)}</span></p>
+                        {command.end_time && <p><span className="font-semibold text-slate-700">End Time:</span> <span className="text-black">{formatDateUTC7(command.end_time)}</span></p>}
+                        {command.end_time && <p><span className="font-semibold text-slate-700">Duration:</span> <span className="text-black">{calculateDuration(command.start_time, command.end_time)}</span></p>}
                     </div>
 
-                    <div className="border p-4 rounded">
-                        <h2 className="font-bold mb-2">Message Information</h2>
-                        <p><span className="font-semibold">Message ID:</span> {command.message_id}</p>
-                        <p><span className="font-semibold">Sender:</span> {command.sender}</p>
-                        <p><span className="font-semibold">Message:</span> {command.message_content}</p>
+                    <div className="border border-slate-300 bg-white p-4 rounded">
+                        <h2 className="font-bold mb-2 text-purple-700">Message Information</h2>
+                        <p><span className="font-semibold text-slate-700">Message ID:</span> <span className="text-black">{command.message_id}</span></p>
+                        <p><span className="font-semibold text-slate-700">Sender:</span> <span className="text-black">{command.sender}</span></p>
                     </div>
                 </div>
 
                 {command.output && (
                     <div className="mb-6">
-                        <h2 className="font-bold mb-2">Output</h2>
-                        <pre className="bg-gray-100 p-4 rounded overflow-x-auto whitespace-pre-wrap">{command.output}</pre>
+                        <h2 className="font-bold mb-2 text-purple-700">Output</h2>
+                        <pre className="bg-slate-50 border border-slate-300 p-4 rounded overflow-x-auto whitespace-pre-wrap text-black">{command.output}</pre>
                     </div>
                 )}
 
                 {command.error && (
                     <div>
-                        <h2 className="font-bold mb-2 text-red-600">Error</h2>
-                        <pre className="bg-red-50 p-4 rounded overflow-x-auto whitespace-pre-wrap text-red-700">{command.error}</pre>
+                        <h2 className="font-bold mb-2 text-rose-600">Error</h2>
+                        <pre className="bg-rose-50 border border-rose-200 p-4 rounded overflow-x-auto whitespace-pre-wrap text-rose-700">{command.error}</pre>
                     </div>
                 )}
             </div>

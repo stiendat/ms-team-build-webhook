@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import {formatDateUTC7} from "@/lib/dateUtils";
 
 export default function MessageHistory() {
     const [messages, setMessages] = useState([]);
@@ -38,46 +39,42 @@ export default function MessageHistory() {
         }
     };
 
-    if (loading) return <div className="text-center p-4">Loading message history...</div>;
-    if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
+    if (loading) return <div className="text-center p-4 text-purple-700">Loading message history...</div>;
+    if (error) return <div className="text-rose-600 p-4">Error: {error}</div>;
 
     return (
         <div className="w-full">
-            <h2 className="text-xl font-bold mb-4">Webhook Message History</h2>
-            <div className="overflow-x-auto">
+            {/*<h2 className="text-xl font-bold mb-4 text-purple-800">Webhook Message History</h2>*/}
+            <div className="overflow-x-auto rounded-lg shadow">
                 <table className="min-w-full bg-white">
                     <thead>
-                    <tr className="bg-gray-100">
-                        <th className="p-2 border">ID</th>
-                        <th className="p-2 border">Sender</th>
-                        <th className="p-2 border">Timestamp</th>
-                        <th className="p-2 border">Content</th>
-                        <th className="p-2 border">Command</th>
-                        <th className="p-2 border">Status</th>
+                    <tr className="bg-purple-100">
+                        <th className="py-3 px-4 border-b border-purple-200 text-left text-sm font-medium text-purple-800">ID</th>
+                        <th className="py-3 px-4 border-b border-purple-200 text-left text-sm font-medium text-purple-800">Developer</th>
+                        <th className="py-3 px-4 border-b border-purple-200 text-left text-sm font-medium text-purple-800">Timestamp</th>
+                        <th className="py-3 px-4 border-b border-purple-200 text-left text-sm font-medium text-purple-800">Status</th>
                     </tr>
                     </thead>
                     <tbody>
                     {messages.length === 0 ? (
                         <tr>
-                            <td colSpan="6" className="text-center p-4">No messages found</td>
+                            <td colSpan="6" className="text-center py-4 px-4 text-slate-600">No messages found</td>
                         </tr>
                     ) : (
                         messages.map(msg => (
                             <tr
                                 key={msg.id}
-                                className={`border-b hover:bg-gray-50 ${msg.command_status ? 'cursor-pointer' : ''}`}
+                                className={`border-b border-slate-200 hover:bg-purple-50 ${msg.command_status ? 'cursor-pointer' : ''}`}
                                 onClick={() => msg.command_status && handleRowClick(msg)}
                                 title={msg.command_status ? "Click to view command details" : ""}
                             >
-                                <td className="p-2 border">{msg.id}</td>
-                                <td className="p-2 border">{msg.sender}</td>
-                                <td className="p-2 border">{new Date(msg.timestamp).toLocaleString()}</td>
-                                <td className="p-2 border">{msg.content}</td>
-                                <td className="p-2 border">{msg.command || 'N/A'}</td>
-                                <td className={`p-2 border ${
-                                    msg.command_status === 'SUCCESS' ? 'text-green-600' :
-                                        msg.command_status === 'FAILED' ? 'text-red-600' :
-                                            msg.command_status === 'START' ? 'text-blue-600' : ''
+                                <td className="py-3 px-4 text-black">{msg.id}</td>
+                                <td className="py-3 px-4 text-black">{msg.sender}</td>
+                                <td className="py-3 px-4 text-black">{formatDateUTC7(msg.timestamp)}</td>
+                                <td className={`py-3 px-4 ${
+                                    msg.command_status === 'SUCCESS' ? 'text-emerald-600 font-medium' :
+                                        msg.command_status === 'FAILED' ? 'text-rose-600 font-medium' :
+                                            msg.command_status === 'START' ? 'text-amber-600 font-medium' : 'text-black'
                                 }`}>
                                     {msg.command_status || 'N/A'}
                                 </td>
