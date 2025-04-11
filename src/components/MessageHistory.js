@@ -11,7 +11,7 @@ export default function MessageHistory() {
     const router = useRouter();
 
     // Get the base path from environment or default to empty string
-    const basePath = process.env.BASE_PATH || '';
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -38,7 +38,7 @@ export default function MessageHistory() {
 
     const handleRowClick = (message) => {
         if (message.command_status) {
-            router.push(`${basePath}/command/${message.id}`);
+            router.push(`/command/${message.id}`);
         }
     };
 
